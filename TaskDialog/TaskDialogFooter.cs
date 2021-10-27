@@ -76,22 +76,21 @@ namespace KPreisser.UI
                 DenyIfBoundAndNotCreated();
                 DenyIfWaitingForInitialization();
 
-                (IntPtr iconValue, bool? iconIsFromHandle) =
-                        TaskDialogPage.GetIconValue(value);
+                TaskDialogPage.IconValueInfo infIconValue = TaskDialogPage.GetIconValue(value);
 
                 // The native task dialog icon cannot be updated from a handle
                 // type to a non-handle type and vice versa, so we need to throw
                 // throw in such a case.
                 if (BoundPage != null &&
-                        iconIsFromHandle != null &&
-                        iconIsFromHandle != _boundIconIsFromHandle)
+                        infIconValue.iconIsFromHandle != null &&
+                        infIconValue.iconIsFromHandle != _boundIconIsFromHandle)
                     throw new InvalidOperationException(
                             "Cannot update the icon from a handle icon type to a " +
                             "non-handle icon type, and vice versa.");
 
                 BoundPage?.BoundTaskDialog.UpdateIconElement(
                         TaskDialogIconElement.TDIE_ICON_FOOTER,
-                        iconValue);
+                        infIconValue.iconValue);
 
                 _icon = value;
             }

@@ -306,21 +306,21 @@ namespace KPreisser.UI
             {
                 DenyIfWaitingForInitialization();
 
-                (IntPtr iconValue, bool? iconIsFromHandle) = GetIconValue(value);
+                IconValueInfo info = GetIconValue(value);
 
                 // The native task dialog icon cannot be updated from a handle
                 // type to a non-handle type and vice versa, so we need to throw
                 // throw in such a case.
                 if (_boundTaskDialog != null &&
-                        iconIsFromHandle != null &&
-                        iconIsFromHandle != _boundIconIsFromHandle)
+                        info.iconIsFromHandle != null &&
+                        info.iconIsFromHandle != _boundIconIsFromHandle)
                     throw new InvalidOperationException(
                             "Cannot update the icon from a handle icon type to a " +
                             "non-handle icon type, and vice versa.");
 
                 _boundTaskDialog?.UpdateIconElement(
                         TaskDialogIconElement.TDIE_ICON_MAIN,
-                        iconValue);
+                        info.iconValue);
 
                 _icon = value;
             }
@@ -453,8 +453,19 @@ namespace KPreisser.UI
             return string.IsNullOrEmpty(str) || str[0] == '\0';
         }
 
-        internal static (IntPtr iconValue, bool? iconIsFromHandle) GetIconValue(
-                TaskDialogIcon icon)
+        internal struct IconValueInfo
+        {
+            public IntPtr iconValue;
+            public bool? iconIsFromHandle;
+
+            public IconValueInfo(IntPtr _iconValue, bool? _iconIsFromHandle)
+            {
+                iconValue = _iconValue;
+                iconIsFromHandle = _iconIsFromHandle;
+            }
+        }
+
+        internal static IconValueInfo GetIconValue(TaskDialogIcon icon)
         {
             IntPtr iconValue = default;
             bool? iconIsFromHandle = null;
@@ -473,7 +484,7 @@ namespace KPreisser.UI
                 iconValue = (IntPtr)standardIconContainer.Icon;
             }
 
-            return (iconValue, iconIsFromHandle);
+            return new IconValueInfo(iconValue, iconIsFromHandle);
         }
 
         internal void DenyIfBound()
@@ -629,8 +640,9 @@ namespace KPreisser.UI
             _boundTaskDialog = owner;
             flags = _flags;
 
-            (IntPtr localIconValue, bool? iconIsFromHandle) = GetIconValue(_icon);
-            (iconValue, _boundIconIsFromHandle) = (localIconValue, iconIsFromHandle ?? false);
+            IconValueInfo infIconValue = GetIconValue(_icon);
+            iconValue = infIconValue.iconValue;
+            _boundIconIsFromHandle = infIconValue.iconIsFromHandle ?? false;
 
             if (_boundIconIsFromHandle)
                 flags |= TaskDialogFlags.TDF_USE_HICON_MAIN;

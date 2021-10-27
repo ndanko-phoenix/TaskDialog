@@ -158,7 +158,13 @@ namespace KPreisser.UI
         /// if a ButtonClicked handler runs the message loop so that new click events
         /// can be processed.
         /// </remarks>
-        private (int stackCount, int navigationIndex) _buttonClickNavigationCounter;
+        private NavigationCounter _buttonClickNavigationCounter;
+
+        private struct NavigationCounter
+        {
+            public int stackCount;
+            public int navigationIndex;
+        }
 
         /// <summary>
         /// The button designated as the dialog result by the handler for the
@@ -177,7 +183,19 @@ namespace KPreisser.UI
         /// handles will return <see cref="TaskDialogNativeMethods.S_FALSE"/> to
         /// not override the previously set result.
         /// </remarks>
-        private (TaskDialogButton button, int buttonID)? _resultButton;
+        private ResultButton? _resultButton;
+
+        private struct ResultButton
+        {
+            public TaskDialogButton button;
+            public int buttonID;
+
+            public ResultButton(TaskDialogButton _button, int _buttonID)
+            {
+                button = _button;
+                buttonID = _buttonID;
+            }
+        }
 
         private bool _suppressButtonClickedEvent;
 
@@ -274,8 +292,10 @@ namespace KPreisser.UI
             : base()
         {
             // TaskDialog is only supported on Windows.
+#if NET_STANDARD
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 throw new PlatformNotSupportedException();
+#endif
 
             // Set default properties.
             _startupLocation = TaskDialogStartupLocation.CenterParent;
@@ -1237,7 +1257,7 @@ namespace KPreisser.UI
 
                             // Cache the result button if we return S_OK.
                             if (handlerResult)
-                                _resultButton = (button, buttonID);
+                                _resultButton = new ResultButton(button, buttonID);
                         }
                     }
 
@@ -1640,11 +1660,10 @@ namespace KPreisser.UI
                                 // string, so we don't need to copy a NUL character
                                 // separately.
                                 long bytesToCopy = SizeOfString(str);
-                                Buffer.MemoryCopy(
-                                        strPtr,
-                                        currentPtr,
-                                        bytesToCopy,
-                                        bytesToCopy);
+
+                                byte* pCurSrc = (byte*)strPtr, pCurDest = currentPtr;
+                                for (long nBytesLeft = bytesToCopy; nBytesLeft > 0; nBytesLeft--, pCurSrc++, pCurDest++)
+                                    *pCurDest = *pCurSrc;
 
                                 var ptrToReturn = currentPtr;
                                 currentPtr += bytesToCopy;

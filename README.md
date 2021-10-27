@@ -1,4 +1,12 @@
-﻿# Task Dialog for .NET (Windows) (Archived)
+﻿# Task Dialog for .NET 4.5+
+
+This is a version of Konstantin Preißer's archived "Task Dialog for .NET" that has been backported to .NET 4.5 on a new "backport" branch. The original project can be found at https://github.com/kpreisser/TaskDialog.
+
+The original README follows.
+
+---------------------------
+
+# Task Dialog for .NET (Windows) (Archived)
 
 **Note:** This repository is now archived as the task dialog is expected to be included with a future .NET Core (WinForms) version and the work is now done in the PR (https://github.com/dotnet/winforms/pull/1133).
 
