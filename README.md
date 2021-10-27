@@ -6,7 +6,7 @@ The original README follows.
 
 ---------------------------
 
-# Task Dialog for .NET (Windows) (Archived)
+## Task Dialog for .NET (Windows) (Archived)
 
 **Note:** This repository is now archived as the task dialog is expected to be included with a future .NET Core (WinForms) version and the work is now done in the PR (https://github.com/dotnet/winforms/pull/1133).
 
@@ -29,7 +29,7 @@ The project targets .NET Framework 4.7.2 and .NET Standard 2.0.
 ![taskdialog-screenshot-1](https://user-images.githubusercontent.com/13289184/48280515-1b3a6e00-e454-11e8-96f3-b22a3bcff22e.png)   ![taskdialog-screenshot-2](https://user-images.githubusercontent.com/13289184/48280347-9cddcc00-e453-11e8-9bc1-605a55e8aaec.png)
 
 
-## Prerequisites
+### Prerequisites
 
 To use the Task Dialog, your application needs to be compiled with a manifest that contains a dependency to
 `Microsoft.Windows.Common-Controls` 6.0.0.0 (otherwise, an
@@ -64,7 +64,7 @@ different thread than the Main Thread, you will need to set it to
 [ApartmentState.STA](https://docs.microsoft.com/dotnet/api/system.threading.apartmentstate).
 
 
-## Using the Task Dialog
+### Using the Task Dialog
 
 Show a simple dialog:
 ```c#
@@ -141,7 +141,7 @@ hyperlinks, navigation and various event handlers (as shown by the screenshots),
 see the [`TaskDialog.Example`](/TaskDialog.Example/Program.cs) project.
 
 
-### Non-modal dialog
+#### Non-modal dialog
 
 Be aware that when you show a non-modal Task Dialog by specifying `null` or `IntPtr.Zero` as
 owner window, the `TaskDialog.Show()` method will still not return until the dialog is closed;
@@ -161,7 +161,7 @@ Note that in that case, the `TimerTick` event will also continue to be called fo
 already closed dialogs until their `Show()` method can return.
 
 
-## Internal details/notes
+### Internal details/notes
 
 For the Task Dialog callback, a static delegate is used to avoid the overhead of creating
 native functions during runtime for each new Task Dialog instance. A
